@@ -1,6 +1,9 @@
 package br.com.dio.persistence;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Stream;
 
 public class IOFilePersistence implements FilePercistence {
 
@@ -33,30 +36,76 @@ public class IOFilePersistence implements FilePercistence {
 
     @Override
     public boolean remove(String sentence) {
+        var contentList = toListString();
+
+        if(contentList.stream().noneMatch(c -> c.contains(sentence))) return false;
+        clearFile();
+        contentList.stream().filter(c -> !c.contains(sentence)).forEach(this::write);
+
         return false;
     }
 
     @Override
     public String replace(String oldContent, String newContent) {
-        return "";
+        var contentList = toListString();
+
+        if(contentList.stream().noneMatch(c -> c.contains(oldContent))) return "";
+
+        clearFile();
+        contentList.stream().map(c -> c.contains(oldContent) ? newContent : c).forEach(this::write);
+        return newContent;
     }
+
 
     @Override
     public String findAll() {
-        return "";
+        var content = new StringBuilder();
+        try (var reader = new BufferedReader(new FileReader(currentDir + storedDir + fileName))){
+
+            String line;
+            do {
+                line = reader.readLine();
+                if((line != null)) content.append(line)
+                        .append(System.lineSeparator());
+
+            }while(line !=null);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return content.toString();
     }
 
     @Override
     public String findBy(String sentense) {
-        return "";
+        var found= "";
+        try (var reader = new BufferedReader(new FileReader(currentDir + storedDir + fileName))){
+            String line = reader.readLine();
+            while (line != null){
+                if ((line.contains(sentense))){
+                    found = line;
+                    break;
+                }
+                line = reader.readLine();
+            }
+        }catch (IOException ex){
+            ex.printStackTrace();
+        }
+        return found;
     }
 
     private void clearFile(){
         try (OutputStream outputStream = new FileOutputStream(currentDir + storedDir + fileName);){
-            System.out.printf("inicializando recursos (%s)", currentDir + storedDir + fileName);
+
         }catch (IOException ex){
             ex.printStackTrace();
         }
+    }
+
+    private List<String> toListString() {
+        var content = findAll();
+        return new ArrayList<>(Stream.of(content.split(System.lineSeparator())).toList());
+
     }
 
 }
