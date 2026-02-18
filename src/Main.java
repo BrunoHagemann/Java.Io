@@ -1,36 +1,34 @@
 import br.com.dio.persistence.FilePercistence;
 import br.com.dio.persistence.IOFilePersistence;
+import br.com.dio.persistence.NIOFilePersistence;
 
 import java.io.IOException;
 
 public class Main {
     public static void main(String[] args) throws IOException {
-        FilePercistence percistence = new IOFilePersistence("user.csv");
-        System.out.println("======================================");
-        System.out.println(percistence.write("eu;eu@eu.com;15/01/2025"));
-        System.out.println("======================================");
-        System.out.println(percistence.write("ele;ele@ele.com;25/12/2020"));
-        System.out.println("======================================");
-        System.out.println(percistence.write("tu;tu@tu.com;17/06/2024"));
-        System.out.println("======================================");
+        FilePercistence percistence = new NIOFilePersistence("user.csv");
 
+        System.out.println(percistence.write("eu;eu@eu;22/09/1997"));
+        System.out.println("=========================");
+        System.out.println(percistence.write("ele;ele@ele; 28/11/1999"));
+        System.out.println("=========================");
+        System.out.println(percistence.write("tu;tu@tu;12/19/2000"));
+
+        System.out.println("=========================");
         System.out.println(percistence.findAll());
+        System.out.println("=========================");
 
-        System.out.println("======================================");
+        System.out.println(percistence.remove("ele@"));
+        System.out.println("=========================");
 
-        System.out.println(percistence.remove("tu"));
-
-        System.out.println("======================================");
-        System.out.println(percistence.findBy("ele"));
-        System.out.println("======================================");
-        System.out.println(percistence.findBy("tu@"));
-        System.out.println("======================================");
-        System.out.println(percistence.findBy("15"));
-        System.out.println("======================================");
-        System.out.println(percistence.replace(".com;15/01/", "Carlos;Carlos@carlo.com;23/04/1991"));
-        System.out.println("======================================");
-        System.out.println(percistence.findAll());
-
+        System.out.println(percistence.findBy("tu"));
+        System.out.println("=========================");
+        System.out.println(percistence.findBy("ele@"));
+        System.out.println("=========================");
+        System.out.println(percistence.replace("tu" , "nos;nos@nos.com;17/10/1988"));
+        System.out.println("=========================");
+        System.out.println(percistence.replace("eu" , "vos;vos@vos.com;17;01;2000"));
+        System.out.println("=========================");
 
     }
 }
